@@ -84,9 +84,22 @@ class StopTask
                 String[] closeMenuPath = SessionManager.isGateway() ? new String[] {"File", "Close"} : new String[] {"File", "Exit"};
                 Utils.logToConsole("Login has completed: exiting via " + Arrays.deepToString(closeMenuPath) + " menu");
                 Utils.invokeMenuItem(MainWindowManager.mainWindowManager().getMainWindow(), closeMenuPath);
+                MyScheduledExecutorService.getInstance().shutdownNow();
+                MyCachedThreadPool.getInstance().shutdownNow();
+                CommandServer.commandServer().shutdown();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException ex) {
+                        }
+                        System.exit(0);
+                    }
+                }.start();
             }
-            
         } catch (Exception e) {
+            // ignore
         }
     }
 
